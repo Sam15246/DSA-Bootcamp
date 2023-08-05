@@ -51,7 +51,7 @@ int main()
 
     cout << endl;
 
-    // Delete only the dynamically allocated nodes
+    // Deleting the dynamically allocated nodes.
     delete dn1;
     delete dn2;
     delete dn3;
