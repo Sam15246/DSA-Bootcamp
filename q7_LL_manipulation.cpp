@@ -9,21 +9,13 @@ struct ListNode
 
 ListNode *createNode(int value = 0) // create node
 {
-    // Using malloc to create/allocate a node in C
-    // struct ListNode* newnode = (struct ListNode *)malloc(sizeof(struct ListNode *));
-
-    // Using malloc to create/allocate a node in C++
-    // ListNode* newnode = (ListNode *)malloc(sizeof(ListNode *));
-
-    // Using new to create/allocate a node in C++
     ListNode *newnode = new ListNode;
-
     newnode->data = value;
     newnode->next = NULL;
-
     return newnode;
 }
-int sizeOf(ListNode *&head)
+
+int sizeOf(ListNode *head)
 {
     int size = 0;
     ListNode *temp = head;
@@ -34,13 +26,16 @@ int sizeOf(ListNode *&head)
     }
     return size;
 }
-void insAtBeg(ListNode *&head, int value) // Insert at Beginning
+
+int insAtBeg(ListNode *&head, int value) // Insert at Beginning
 {
     ListNode *newnode = createNode(value);
     newnode->next = head;
     head = newnode;
+    return 0;
 }
-void insAtEnd(ListNode *&head, int value) // Insert at End
+
+int insAtEnd(ListNode *&head, int value) // Insert at End
 {
     ListNode *newnode = createNode(value);
     if (head == NULL)
@@ -56,13 +51,15 @@ void insAtEnd(ListNode *&head, int value) // Insert at End
         }
         temp->next = newnode;
     }
+    return sizeOf(head) - 1;
 }
-void insAtIndex(ListNode *&head, int value, int index) // Insert at given Index
+
+int insAtIndex(ListNode *&head, int value, int index) // Insert at given Index
 {
     if (index < 0 || sizeOf(head) < index)
     {
         // Invalid Index
-        return;
+        return -1;
     }
     else if (index == 0)
     {
@@ -87,32 +84,36 @@ void insAtIndex(ListNode *&head, int value, int index) // Insert at given Index
             temp->next = newnode;
         }
     }
+    return index;
 }
 
-void delAtBeg(ListNode *&head)
+int delAtBeg(ListNode *&head)
 {
     if (head == NULL)
     {
-        return;
+        return -1;
     }
 
     ListNode *temp = head;
     head = head->next;
+    int data = temp->data;
     delete temp;
+    return data;
 }
 
-void delAtEnd(ListNode *&head)
+int delAtEnd(ListNode *&head)
 {
     if (head == NULL)
     {
-        return;
+        return -1;
     }
 
     if (head->next == NULL)
     {
+        int data = head->data;
         delete head;
         head = NULL;
-        return;
+        return data;
     }
 
     ListNode *temp = head;
@@ -120,20 +121,22 @@ void delAtEnd(ListNode *&head)
     {
         temp = temp->next;
     }
+    int data = temp->next->data;
     delete temp->next;
     temp->next = NULL;
+    return data;
 }
 
-void delAtIndex(ListNode *&head, int index)
+int delAtIndex(ListNode *&head, int index)
 {
     if (index < 0 || head == NULL)
     {
-        return;
+        return -1;
     }
 
     if (index == 0)
     {
-        delAtBeg(head);
+        return delAtBeg(head);
     }
     else
     {
@@ -150,11 +153,13 @@ void delAtIndex(ListNode *&head, int index)
 
         if (temp == NULL)
         {
-            return;
+            return -1;
         }
 
+        int data = temp->data;
         prev->next = temp->next;
         delete temp;
+        return data;
     }
 }
 
@@ -185,7 +190,11 @@ int main()
         {
             cout << "Enter data value: ";
             cin >> value;
-            insAtBeg(head, value);
+            index = insAtBeg(head, value);
+            if (index < 0)
+                cout << "-- Node can't be inserted at the specified index"<< endl;
+            else
+                cout << "++ Node is inserted at the specified index"<< endl;
             display(head);
             break;
         }
@@ -193,7 +202,11 @@ int main()
         {
             cout << "Enter data value: ";
             cin >> value;
-            insAtEnd(head, value);
+            index = insAtEnd(head, value);
+            if (index < 0)
+                cout << "-- Node can't be inserted at the specified index"<< endl;
+            else
+                cout << "++ Node is inserted at the specified index"<< endl;
             display(head);
             break;
         }
@@ -203,19 +216,31 @@ int main()
             cin >> value;
             cout << "Enter index: ";
             cin >> index;
-            insAtIndex(head, value, index);
+            index = insAtIndex(head, value, index);
+            if (index < 0)
+                cout << "-- Node can't be inserted at the specified index"<< endl;
+            else
+                cout << "++ Node is inserted at the specified index"<< endl;
             display(head);
             break;
         }
         case 4: // delete at beg
         {
-            delAtBeg(head);
+            index = delAtBeg(head);
+            if (index < 0)
+                cout << "-- Node can't be deleted at the specified index"<< endl;
+            else
+                cout << "++ Node is deleted at the specified index"<< endl;
             display(head);
             break;
         }
         case 5: // delete at end
         {
-            delAtEnd(head);
+            index = delAtEnd(head);
+            if (index < 0)
+                cout << "-- Node can't be deleted at the specified index"<< endl;
+            else
+                cout << "++ Node is deleted at the specified index"<< endl;
             display(head);
             break;
         }
@@ -223,7 +248,11 @@ int main()
         {
             cout << "Enter index: ";
             cin >> index;
-            delAtIndex(head, index);
+            int data = delAtIndex(head, index);
+            if (data < 0)
+                cout << "-- Node can't be deleted at the specified index"<< endl;
+            else
+                cout << "++ Node with data " << data << " is deleted at the specified index"<< endl;
             display(head);
             break;
         }
